@@ -7,7 +7,7 @@ app = Flask(__name__)
 ACCESS_TOKEN = "EAAOj6ZAIAuUYBO2ti6mZAgPna95G4mc2YfxiNzZAnPPd5kZB0paahFmJToGdhp90rQyJfaUBZAZCJZCDrWRJKP71ZAIigCUgacCcNjO0ZBCz9MMDn0QHwlmknCDaGci5NBCqmQbffuIdmFQ35ZBn1BZBuOWVNDPnHCeADORFYZCEDW7RhlXAu9M0RnROBtPMgWc6ODNGopG1aD83di0yKIJZAiby6VcK13a8ZD"
 PHONE_NUMBER_ID = "624030817461040"  # Verified working
 EXCEL_FILE = "contacts.xlsx"
-VERIFY_TOKEN = "your_verify_token"  # Replace with your custom verify token (e.g., "my_secret_token")
+VERIFY_TOKEN = "BDC_Surat"  # Replace with your custom verify token (e.g., "my_secret_token")
 
 # Load Excel data
 df = pd.read_excel(EXCEL_FILE)
