@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "vishesh-ai-model",
+  "private_key_id": "7820d7c0bc7541e28f6471ca77244894267b3f96",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCc4RVjyzKHjOcT\nSdtenPzeZCm/AmPCvFqBGEWNHp5F210bmVccRheFN5BlYo8M3pURrKiA5hPnQw4/\nsjqhwzWOXoBhpuoTw0aGKTFzT/KOuFEte+qk5zwL8kkBYYETKBRs4C3jH3on6RZ8\nwGdiLHUrRnRcH9METp+jxRZvOJPEv0Cu3mIUQLvCIAAYWfJAxwP5vLOd92Js7gEq\nQvGnJwRMX/HfwHoCU7pE9W1Ja2RTPHPwWH29eg/fhJJkt+ATYOshoLmuZahNRljL\nP0bOEgl9nYWjBSZyaT6XTp5xspCDwChfdVAdxdY32x9iAyP7Fs6a1koOJagQEVTj\nqSw5+L0DAgMBAAECggEATmtVPeU9BPUyLTomJk1jOefn1ktjgtyUgSOY4MoFY/Yb\nvMgR+1guObFkxMlXqJ869PLR6F0aZefnH4AAPwxNoTUsB6RgLjDW+AlvZqz4Gs+Y\nBJyE1pmgMniSddY/p0vJqgMF7Rq2/WxOiV3EUBbZGyDE2agu22BR/JNwe3hUpWwM\ngNrkhppAnssHq/rx9deia9E7E4uiOAWNrWPnvLRnQ2Q3X6RBm95BGVESw6bxrZOr\ngUK7o78hWzhwtcbI79uaRi0R8Yc6Di/3sKu7G4lfB5xOI49Y+c9r0XO3O2knAgCC\nxJw5Scen0DymduAwLChPiZmj9UhDUZhGj0X5a2unQQKBgQDOXVcy8go0D41gaOSk\ni+ZLJZmrX8vHN0ph4K6lJJ5NaxsskhMSw2eUDXrSToxdU+NkuiAdfgAoNc/k+6RN\nPd+VowmLRtut7GqCAUqHUEh9oQmkYRcFIRYV/ZUu7oGp++QGUL2+RpRTHsqGPLLI\nChpoayy7BZT11UiXEJgRGIR1xQKBgQDCnL0XvcKyAyBbnS7tbUkO0puh/jowl6o0\nTQFZEhln/L+Hchhrbu9sfLqW0SkA9e3GV83/zH0tqWEQUtMxYiELNmP69yCcoCvA\nB0G8vxSrbJY1532BNQCYLvOxyRR/6yNM9ygdE+NrB8aXHiKa/Dwix6CzXP2H1Gsn\nqpWCBRhcJwKBgAm+4LpYMeEphtyxt3KJ5NNRsEMmoAIFe27J5JWJ+CvhzgO51krB\njaexR0adTQWvS4LbQ18BL1K2z92ZgLXhISj47R91tjQtgQ4or3NaeEHuk/z+VM76\nNAfP1PbFbrwvWCJwN7W/sYuHXbsfLLZDu+GIhjFC3zkI3Ie90eCkzsSdAoGAK/v4\n0NDWnB0QxyPzYz378RmwiyBGTo04rrFoyJTKoTICp74lvsJH4qEeGtATEGCE6PsX\nV+UDtbo+cc4GZXbkOQCGAEayXDPnL3N0bBBTv5q/KFe1iepMxBh4g4oK1A504ARM\nUKYaFCqhu63X7Gdtv/6WV3OA6Z4cyc5IFCbKpqkCgYAhYdhdtdRP6aQgaNc2PeeS\nVdZk2psUKmTEhnEEa9f60Upyqa0FtCNB3iUcVIJSfczLUFAf/lt3pS7BbdU89uLH\nUejpR6qTyA65Fo/NIk1m6V0ZMjS+caQUJJv9znAPiNi6k3qdto7+K+gt7pTq7Abr\nByCmua4vFa1TiySj9UZIpA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "sheets-api-access@vishesh-ai-model.iam.gserviceaccount.com",
+  "client_id": "106604198949755652512",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/sheets-api-access%40vishesh-ai-model.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
