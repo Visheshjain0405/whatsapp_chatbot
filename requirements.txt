@@ -1,5 +1,5 @@
-flask
-pandas
-requests
-openpyxl
-gunicorn
+Flask==2.3.3
+gspread==6.0.2
+google-auth==2.29.0
+pandas==2.2.1
+requests==2.31.0
