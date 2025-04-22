@@ -130,11 +130,16 @@ def send_messages():
 @app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
     if request.method == 'GET':
+        mode = request.args.get('hub.mode')
         verify_token = request.args.get('hub.verify_token')
         challenge = request.args.get('hub.challenge')
-        if verify_token == VERIFY_TOKEN:
+
+        if mode == 'subscribe' and verify_token == VERIFY_TOKEN:
+            print("Webhook verified!")
             return challenge, 200
-        return "Verification failed", 403
+        else:
+            print("Webhook verification failed.")
+            return "Verification failed", 403
 
     elif request.method == 'POST':
         data = request.get_json()
@@ -153,6 +158,7 @@ def webhook():
                         print(f"Updated {row['FirstName']} {row['LastName']} with confirmation: {payload}")
                         break
         return jsonify({"status": "success"}), 200
+
 
 # Entry point
 if __name__ == "__main__":
