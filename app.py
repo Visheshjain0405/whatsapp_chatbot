@@ -2,21 +2,44 @@ import pandas as pd
 import requests
 import time
 from flask import Flask, request, jsonify
+import gspread
+from google.oauth2.service_account import Credentials
+from dotenv import load_dotenv
+import os
 
+# Load environment variables from .env file
+load_dotenv()
+
+# Flask App
 app = Flask(__name__)
-ACCESS_TOKEN = "EAAOj6ZAIAuUYBO1rDDWK38fn97FDKQE1end1WIZApQv6kkwvNfHHXimqP2p8W0SzlznlexC0lgkHZANMrA4DrMOIZCfd7SnLfpvZB0dxOvAibFyMvcfka1aSUNNxv1ZBjJYUW2Q62C3GYadrd7ukNJ6saxadgtchZCvpJMrFyGynlzeMHg9LBKKk68leNCDxtBCl4vKwZBoM4kRClEy3ZBVRdF9eANvAZD"
-PHONE_NUMBER_ID = "624030817461040"  # Verified working
-EXCEL_FILE = "contacts.xlsx"
-VERIFY_TOKEN = "BDC_Surat"  # Replace with your custom verify token (e.g., "my_secret_token")
 
-# Load Excel data
-df = pd.read_excel(EXCEL_FILE)
+# WhatsApp API Credentials
+ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
+PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
+VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 
-# Function to send WhatsApp template message
+# Google Sheets Setup
+SERVICE_ACCOUNT_FILE = os.getenv("SERVICE_ACCOUNT_FILE")
+SHEET_NAME = os.getenv("SHEET_NAME")
+
+# Authenticate and load sheet
+scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
+creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=scope)
+client = gspread.authorize(creds)
+sheet = client.open(SHEET_NAME).sheet1
+data = sheet.get_all_records()
+df = pd.DataFrame(data)
+
+# Helper to update cell in Google Sheet
+def update_google_sheet_cell(row_index, col_name, value):
+    col_index = df.columns.get_loc(col_name) + 1
+    sheet.update_cell(row_index + 2, col_index, value)
+
+# WhatsApp message sender
 def send_whatsapp_message(to, first_name, training_title, date, time):
     date_str = date.strftime('%d %B %Y') if hasattr(date, 'strftime') else date
     time_str = time.strftime('%I:%M %p %Z') if hasattr(time, 'strftime') else time
-    
+
     url = f"https://graph.facebook.com/v22.0/{PHONE_NUMBER_ID}/messages"
     headers = {
         "Authorization": f"Bearer {ACCESS_TOKEN}",
@@ -27,7 +50,7 @@ def send_whatsapp_message(to, first_name, training_title, date, time):
         "to": to,
         "type": "template",
         "template": {
-            "name": "bdc_training",  # Updated to use bdc_training
+            "name": "bdc_training",
             "language": {"code": "en"},
             "components": [
                 {
@@ -36,7 +59,7 @@ def send_whatsapp_message(to, first_name, training_title, date, time):
                         {"type": "text", "text": f"{first_name}"},
                         {"type": "text", "text": date_str},
                         {"type": "text", "text": time_str},
-                        {"type": "text", "text": training_title}  # Fixed to use training_title
+                        {"type": "text", "text": training_title}
                     ]
                 }
             ]
@@ -51,11 +74,11 @@ def send_whatsapp_message(to, first_name, training_title, date, time):
         print(f"Failed to send message to {to}: {e.response.text if e.response else str(e)}")
         return False
 
-# Function to send confirmation message
+# Confirmation message sender
 def send_confirmation_message(to, first_name, training_title, date, time):
     date_str = date.strftime('%d %B %Y') if hasattr(date, 'strftime') else date
     time_str = time.strftime('%I:%M %p %Z') if hasattr(time, 'strftime') else time
-    
+
     url = f"https://graph.facebook.com/v22.0/{PHONE_NUMBER_ID}/messages"
     headers = {
         "Authorization": f"Bearer {ACCESS_TOKEN}",
@@ -90,7 +113,7 @@ def send_confirmation_message(to, first_name, training_title, date, time):
         print(f"Failed to send confirmation to {to}: {e.response.text if e.response else str(e)}")
         return False
 
-# Send messages to all unprocessed contacts
+# Send initial WhatsApp messages
 def send_messages():
     for index, row in df.iterrows():
         if row["WhatsApp Msg Status"] == "Not Send":
@@ -98,28 +121,21 @@ def send_messages():
             print(f"Attempting to send to {mobile}")
             if send_whatsapp_message(mobile, row["FirstName"], row["Training Title"], row["Date"], row["Time"]):
                 print(f"Message sent to {row['FirstName']} {row['LastName']}")
-                try:
-                    df.at[index, "WhatsApp Msg Status"] = "Send"
-                    df.to_excel(EXCEL_FILE, index=False)
-                    print(f"Updated {EXCEL_FILE} for {row['FirstName']} {row['LastName']}")
-                except PermissionError as e:
-                    print(f"Permission denied while saving {EXCEL_FILE}: {e}. Please close the file or run with admin privileges.")
-                except Exception as e:
-                    print(f"Error saving {EXCEL_FILE}: {e}")
+                update_google_sheet_cell(index, "WhatsApp Msg Status", "Send")
             else:
                 print(f"Failed to send to {row['FirstName']} {row['LastName']}")
-            time.sleep(1)  # Avoid rate limiting
+            time.sleep(1)
 
-# Webhook to handle responses
+# Webhook handler
 @app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
     if request.method == 'GET':
-        # Verify webhook
         verify_token = request.args.get('hub.verify_token')
         challenge = request.args.get('hub.challenge')
         if verify_token == VERIFY_TOKEN:
             return challenge, 200
         return "Verification failed", 403
+
     elif request.method == 'POST':
         data = request.get_json()
         if data.get('entry') and data['entry'][0].get('changes'):
@@ -127,24 +143,18 @@ def webhook():
             if message.get('type') == 'button':
                 payload = message['button'].get('payload')
                 from_number = message['from']
-                # Update Excel based on response
                 for index, row in df.iterrows():
                     if str(row["Mobile Number"]) == from_number:
                         if payload == "YES":
-                            df.at[index, "Confirmation"] = "Yes"
+                            update_google_sheet_cell(index, "Confirmation", "Yes")
                             send_confirmation_message(from_number, row["FirstName"], row["Training Title"], row["Date"], row["Time"])
                         elif payload == "NO":
-                            df.at[index, "Confirmation"] = "No"
-                        try:
-                            df.to_excel(EXCEL_FILE, index=False)
-                            print(f"Updated {row['FirstName']} {row['LastName']} with confirmation: {payload}")
-                        except PermissionError as e:
-                            print(f"Permission denied while saving {EXCEL_FILE}: {e}. Please close the file or run with admin privileges.")
-                        except Exception as e:
-                            print(f"Error saving {EXCEL_FILE}: {e}")
+                            update_google_sheet_cell(index, "Confirmation", "No")
+                        print(f"Updated {row['FirstName']} {row['LastName']} with confirmation: {payload}")
                         break
         return jsonify({"status": "success"}), 200
 
+# Entry point
 if __name__ == "__main__":
-    send_messages()  # Send initial messages
-    app.run(port=5000, debug=True)  # Start webhook server with debug mode
+    send_messages()
+    app.run(port=5000, debug=True)
